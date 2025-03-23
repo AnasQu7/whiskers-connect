@@ -13,6 +13,7 @@ import Communities from "./pages/Communities";
 import CommunityDetails from "./pages/CommunityDetails";
 import CreateCommunity from "./pages/CreateCommunity";
 import CreatePost from "./pages/CreatePost";
+import PostDetail from "./pages/PostDetail";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/community/:communityId" element={<CommunityDetails />} />
             <Route path="/create-community" element={<CreateCommunity />} />
             <Route path="/community/:communityId/create-post" element={<CreatePost />} />
+            <Route path="/post/:postId" element={<PostDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

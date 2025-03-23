@@ -21,7 +21,10 @@ export function CommunityCard({ community, onJoin }: CommunityCardProps) {
   
   const isMember = user && community.members.includes(user._id);
 
-  const handleJoin = async () => {
+  const handleJoin = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     if (!isAuthenticated || !user) {
       toast({
         variant: "destructive",
@@ -53,6 +56,7 @@ export function CommunityCard({ community, onJoin }: CommunityCardProps) {
         onJoin();
       }
     } catch (error) {
+      console.error("Join error:", error);
       toast({
         variant: "destructive",
         title: "Error joining community",

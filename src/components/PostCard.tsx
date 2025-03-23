@@ -40,7 +40,37 @@ export function PostCard({ post, communityName }: PostCardProps) {
             {post.content}
           </p>
           
-          {hasMedia && (
+          {post.imageLink && (
+            <div className="w-full h-40 overflow-hidden rounded-md">
+              <img 
+                src={post.imageLink} 
+                alt="Post image" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder.svg';
+                  target.alt = 'Image not available';
+                }}
+              />
+            </div>
+          )}
+          
+          {post.videoLink && !post.imageLink && (
+            <div className="w-full h-40 overflow-hidden rounded-md">
+              <video 
+                src={post.videoLink} 
+                muted 
+                autoPlay
+                loop
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error("Video failed to load:", e);
+                }}
+              />
+            </div>
+          )}
+          
+          {hasMedia && !post.imageLink && !post.videoLink && (
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               {post.imageLink && (
                 <span className="flex items-center">

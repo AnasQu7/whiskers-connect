@@ -19,6 +19,7 @@ const CommunityDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState("all");
+  const [joining, setJoining] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -82,6 +83,8 @@ const CommunityDetails = () => {
       return;
     }
     
+    setJoining(true);
+    
     try {
       await communitiesAPI.join(community._id, user._id);
       
@@ -93,11 +96,14 @@ const CommunityDetails = () => {
       // Refresh community data
       fetchCommunity();
     } catch (error) {
+      console.error("Join error:", error);
       toast({
         variant: "destructive",
         title: "Error joining community",
         description: error instanceof Error ? error.message : "An error occurred",
       });
+    } finally {
+      setJoining(false);
     }
   };
 
@@ -148,8 +154,9 @@ const CommunityDetails = () => {
                     <Button 
                       className="bg-whisker-orange hover:bg-whisker-orange/80"
                       onClick={handleJoin}
+                      disabled={joining}
                     >
-                      Join Community
+                      {joining ? "Joining..." : "Join Community"}
                     </Button>
                   )}
                   
@@ -182,9 +189,9 @@ const CommunityDetails = () => {
                 <Button 
                   className="bg-whisker-orange hover:bg-whisker-orange/80"
                   onClick={handleJoin}
-                  disabled={!isAuthenticated}
+                  disabled={!isAuthenticated || joining}
                 >
-                  {isAuthenticated ? "Join Community" : "Log in to Join"}
+                  {isAuthenticated ? (joining ? "Joining..." : "Join Community") : "Log in to Join"}
                 </Button>
               </div>
             ) : (
