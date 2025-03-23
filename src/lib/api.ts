@@ -70,9 +70,11 @@ export const authAPI = {
       
       const data = await response.json();
       
-      if (data.token) {
+      if (data && data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
         return data.user;
       } else {
         // Fallback to mock login for testing if no token is provided
