@@ -73,7 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Login successful",
         description: `Welcome back, ${user.username}!`,
       });
+      
+      return;
     } catch (error) {
+      console.error("Login error:", error);
+      
       setState({
         isAuthenticated: false,
         user: null,
@@ -86,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Login failed",
         description: error instanceof Error ? error.message : "Login failed",
       });
+      
+      throw error;
     }
   };
 
@@ -103,8 +109,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState({
         ...state,
         loading: false,
+        error: null,
       });
     } catch (error) {
+      console.error("Registration error:", error);
+      
       setState({
         ...state,
         loading: false,
@@ -116,6 +125,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Registration failed",
         description: error instanceof Error ? error.message : "Registration failed",
       });
+      
+      throw error;
     }
   };
 

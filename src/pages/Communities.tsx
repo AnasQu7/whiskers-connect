@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { communitiesAPI } from "@/lib/api";
 import { Community } from "@/types";
-import { PlusCircle, RefreshCw, Search } from "lucide-react";
+import { PlusCircle, RefreshCw, Search, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Communities = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
@@ -24,11 +25,12 @@ const Communities = () => {
     
     try {
       const data = await communitiesAPI.getAll();
+      console.log("Fetched communities:", data);
       setCommunities(data);
       setFilteredCommunities(data);
     } catch (err) {
-      setError("Failed to load communities");
-      console.error(err);
+      console.error("Error fetching communities:", err);
+      setError(err instanceof Error ? err.message : "Failed to load communities");
     } finally {
       setLoading(false);
     }
@@ -86,6 +88,23 @@ const Communities = () => {
           </div>
         </div>
         
+        {error && error.includes("ngrok") && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>API Connection Issue</AlertTitle>
+            <AlertDescription>
+              The API server requires consent through ngrok. Please <a 
+                href="https://b702-2405-201-5018-883b-291d-a362-edc4-e2c.ngrok-free.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline font-semibold"
+              >
+                click here
+              </a> to visit the API URL directly and accept the consent screen, then return and refresh this page.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {/* Search and filters */}
         <div className="mb-8">
           <div className="relative">
@@ -104,7 +123,7 @@ const Communities = () => {
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-whisker-orange"></div>
           </div>
-        ) : error ? (
+        ) : error && !error.includes("ngrok") ? (
           <div className="text-center py-12">
             <p className="text-red-400 mb-4">{error}</p>
             <Button onClick={fetchCommunities} variant="outline">
