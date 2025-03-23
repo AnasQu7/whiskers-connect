@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -15,12 +16,17 @@ interface LoginFormProps {
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { login, loading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(username, password);
-    if (onSuccess) onSuccess();
+    try {
+      await login(username, password);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error("Login error in form:", err);
+    }
   };
 
   return (
@@ -68,6 +74,20 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             />
           </div>
           
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="remember" 
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(checked as boolean)} 
+            />
+            <label
+              htmlFor="remember"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Remember me
+            </label>
+          </div>
+          
           <Button 
             type="submit" 
             className="w-full bg-whisker-orange hover:bg-whisker-orange/80" 
@@ -108,8 +128,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     }
     
     setPasswordError("");
-    await register(username, password);
-    if (onSuccess) onSuccess();
+    try {
+      await register(username, password);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error("Registration error in form:", err);
+    }
   };
 
   return (
